@@ -1,19 +1,49 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:school_phone/DBModel/db_model.dart';
 import 'package:school_phone/screens/rate/rate_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
+  
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
 
+   String? _username , _userid , _email;
+
+   List requestList = [];
+  
+  void getUser(){
+    FirebaseFirestore.instance.collection('users').doc("${FirebaseAuth.instance.currentUser!.uid}").get().then((value) => {
+
+    setState(() {
+      _userid = FirebaseAuth.instance.currentUser!.uid;
+      _username = value.get("name");
+      _email = value.get("email");
+    })
+
+
+      
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    getUser();
+
+  }
   int _currentIndex = 0;
   @override
   Widget build(BuildContext context) {
+
 
     var size = MediaQuery.of(context).size;
     List items = [
@@ -164,8 +194,8 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(
                 height: 15,
               ),
-              const Text(
-                'Ashry',
+               Text(
+                '${_username}',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.blue,
@@ -175,8 +205,8 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(
                 height: 5,
               ),
-              const Text(
-                '01004371412',
+               Text(
+                '${_email}',
                 style: TextStyle(
                   fontSize: 16,
                   color: Color(0xff676767),
@@ -248,7 +278,43 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 10,
               ),
 
-              _currentIndex == 0 ? _schoolWidget(size: size) : _myRatesWidget(),
+              _currentIndex == 0 
+                  ? Expanded(
+                child: Column(
+                  children: [
+                    FutureBuilder(
+                        future: DBModel().getAllSchool(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return  Text(
+                                "Something went wrong ${snapshot.error.toString()}");
+                          }
+
+
+
+                          if (snapshot.connectionState == ConnectionState.done) {
+                            requestList = snapshot.data as List;
+                            print("requestList $requestList");
+
+                            return Expanded(
+                              child: ListView.builder(
+                                  itemCount:
+                                  requestList.length,
+                                  itemBuilder:
+                                      (context, index) {
+
+                                    return _schoolWidget( thubnail: '${requestList[index]['thubnail']}', name: '${requestList[index]['name']}', uid: '${requestList[index]['uid']}', url: '${requestList[index]['url']}', time: '${requestList[index]['time']}');
+                                  }),
+                            );
+                          }
+
+                          return const Center(
+                            child: Text("loading......"),
+                          );
+                        }),
+                  ],
+                ),
+              ) : _myRatesWidget(),
             ],
           ),
         ),
@@ -259,7 +325,13 @@ class _HomeScreenState extends State<HomeScreen> {
   _schoolWidget
       (
   {
-    required size ,
+
+    required String thubnail ,
+    required String name ,
+    required String uid ,
+    required String url ,
+    required String time ,
+
 }
       )
 
@@ -279,79 +351,12 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
         child: Container(
-          width: size.width,
-          height: 100,
-          padding:const EdgeInsets.only(top: 10,bottom: 10,left: 10,right: 0,),
-          margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10,),
+          width: 120,
+          height: 120,
           decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: const [
-                BoxShadow(
-                    color: Colors.grey, blurRadius: 5, offset: Offset(3, 3)),
-              ]),
-          child: Row(
-            children: [
-              Container(
-                width: size.width * 0.3,
-                decoration: BoxDecoration(
-                  color: Colors.cyan,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children:  const [
-                  Text(
-                    'Name',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    'Date',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color:Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              InkWell(
-                onTap:()
-                {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (ctx) => const RateScreen(),
-                    ),
-                  );
-                },
-                child: Container(
-                  width: 30,
-                  height: 55,
-                 alignment: Alignment.center,
-                 decoration: const BoxDecoration(
-                   borderRadius: BorderRadius.only(
-                     topLeft: Radius.circular(15),
-                     bottomLeft:  Radius.circular(15),
-                   ),
-                   color: Colors.orange,
-
-                 ),
-                  child: const Icon(Icons.star,color: Colors.white,size: 15,),
-                ),
-              )
-
-            ],
+            image: DecorationImage(image: NetworkImage(thubnail) ,fit: BoxFit.cover),
+            color: Colors.cyan,
+            borderRadius: BorderRadius.circular(25),
           ),
         ),
       );
