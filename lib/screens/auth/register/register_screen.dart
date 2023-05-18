@@ -71,7 +71,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       keyboardType: TextInputType.text,
                       decoration:  InputDecoration(
                         enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.teal,width: 1,),
+                          borderSide: const BorderSide(color: Colors.orange,width: 1,),
                           borderRadius: BorderRadius.circular(60),
                         ),
                         hintText: 'enter your name',
@@ -88,7 +88,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       keyboardType: TextInputType.text,
                       decoration:  InputDecoration(
                         enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.teal,width: 1,),
+                          borderSide: const BorderSide(color: Colors.orange,width: 1,),
                           borderRadius: BorderRadius.circular(60),
                         ),
                         hintText: 'enter your email',

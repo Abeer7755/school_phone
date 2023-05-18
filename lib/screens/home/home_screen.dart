@@ -172,6 +172,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontSize: 20,
                 ),
               ),
+              const SizedBox(
+                height: 5,
+              ),
               const Text(
                 '01004371412',
                 style: TextStyle(
