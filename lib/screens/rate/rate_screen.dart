@@ -4,7 +4,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:school_phone/screens/home/home_screen.dart';
 
 class RateScreen extends StatefulWidget {
-  const RateScreen({Key? key}) : super(key: key);
+  final String uid ,name,thubnail,time;
+   RateScreen({Key? key, required  this.uid, required this.name, required this.thubnail, required this.time}) : super(key: key);
 
   @override
   State<RateScreen> createState() => _RateScreenState();
@@ -65,6 +66,7 @@ class _RateScreenState extends State<RateScreen> {
                          width: 100,
                          height: 100,
                          decoration: BoxDecoration(
+                           image: DecorationImage(image: NetworkImage("${widget.thubnail}"),fit: BoxFit.cover),
                            border: Border.all(
                              color: Colors.blueAccent,
                              width: 3,
@@ -72,11 +74,7 @@ class _RateScreenState extends State<RateScreen> {
                            borderRadius: BorderRadius.circular(100),
                          ),
                        ),
-                       Image.asset(
-                         'assets/images/user.png',
-                         width: 90,
-                         height: 90,
-                       ),
+
 
                      ],
                    ),
@@ -86,16 +84,16 @@ class _RateScreenState extends State<RateScreen> {
                const SizedBox(
                  height: 15,
                ),
-               const Text(
-                 'Ashry',
+                Text(
+                 '${widget.name}',
                  style: TextStyle(
                    color: Colors.blue,
                    fontSize: 18,
                    fontWeight: FontWeight.bold,
                  ),
                ),
-               const Text(
-                 'Date',
+                Text(
+                 '${widget.time}',
                  style: TextStyle(color: Color(0xffC5C4D6), fontSize: 14),
                ),
                const SizedBox(

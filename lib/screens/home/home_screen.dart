@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:school_phone/DBModel/db_model.dart';
 import 'package:school_phone/screens/rate/rate_screen.dart';
-
+import 'package:timeago/timeago.dart' as timeago;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -303,7 +303,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   itemBuilder:
                                       (context, index) {
 
-                                    return _schoolWidget( thubnail: '${requestList[index]['thubnail']}', name: '${requestList[index]['name']}', uid: '${requestList[index]['uid']}', url: '${requestList[index]['url']}', time: '${requestList[index]['time']}');
+                                    return _schoolWidget( thubnail: '${requestList[index]['thubnail']}', name: '${requestList[index]['name']}', uid: '${requestList[index]['uid']}', url: '${requestList[index]['url']}', time: requestList[index]['time'] , size: size);
                                   }),
                             );
                           }
@@ -326,41 +326,101 @@ class _HomeScreenState extends State<HomeScreen> {
       (
   {
 
+    required size,
     required String thubnail ,
     required String name ,
     required String uid ,
     required String url ,
-    required String time ,
+    required Timestamp time ,
 
 }
       )
 
   {
-    return Expanded(child:
-    ListView.builder(
-        itemCount: 2,
-        itemBuilder: (context,index)
-    {
-      return InkWell(
-        onTap: ()
-        {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (ctx) => const RateScreen(),
+    DateTime d = time.toDate();
+    return InkWell(
+
+      child: Container(
+        width: size.width,
+        height: 100,
+        padding:const EdgeInsets.only(top: 10,bottom: 10,left: 10,right: 0,),
+        margin: const EdgeInsets.symmetric(vertical: 5,),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: const [
+              BoxShadow(
+                  color: Colors.grey, blurRadius: 5, offset: Offset(3, 3)),
+            ]),
+        child: Row(
+          children: [
+            Container(
+              width: size.width * 0.3,
+              decoration: BoxDecoration(
+                image: DecorationImage(image: NetworkImage("$thubnail"),fit: BoxFit.cover),
+                color: Colors.cyan,
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
-          );
-        },
-        child: Container(
-          width: 120,
-          height: 120,
-          decoration: BoxDecoration(
-            image: DecorationImage(image: NetworkImage(thubnail) ,fit: BoxFit.cover),
-            color: Colors.cyan,
-            borderRadius: BorderRadius.circular(25),
-          ),
+            const SizedBox(
+              width: 15,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children:   [
+                Text(
+                  '${name}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Container(
+                  width: size.width * 0.3,
+                  child: Text(
+                    '$d',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color:Colors.grey,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            InkWell(
+              onTap:()
+              {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (ctx) =>  RateScreen(uid:uid ,name:name ,thubnail:thubnail,time:d.toString() ),
+                  ),
+                );
+              },
+              child: Container(
+                width: 30,
+                height: 55,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    bottomLeft:  Radius.circular(15),
+                  ),
+                  color: Colors.orange,
+
+                ),
+                child: const Icon(Icons.star,color: Colors.white,size: 15,),
+              ),
+            )
+
+          ],
         ),
-      );
-    }));
+      ),
+    );
   }
   _myRatesWidget()
   {
