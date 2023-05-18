@@ -39,6 +39,9 @@ dependencies:
   form_validator:
   buildcondition:
 
+  # firebase
+  firebase_core: ^2.13.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
