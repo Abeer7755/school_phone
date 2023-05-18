@@ -85,9 +85,9 @@ class DBModel {
     }
   }
 
-  getFriends(String uid) async {
+  getAllRating(String uid) async {
     Query<Map<String, dynamic>> collectionRef =
-    FirebaseFirestore.instance.collection("Requests").where("familyId",isEqualTo: "$uid").where("status",isEqualTo: "1");
+    FirebaseFirestore.instance.collection("rating").where("userID",isEqualTo: "$uid");
 
     try {
 

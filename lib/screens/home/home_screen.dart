@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:school_phone/DBModel/db_model.dart';
 import 'package:school_phone/screens/rate/rate_screen.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -18,7 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
    String? _username , _userid , _email;
 
    List requestList = [];
-  
+   List requesRatetList = [];
+
   void getUser(){
     FirebaseFirestore.instance.collection('users').doc("${FirebaseAuth.instance.currentUser!.uid}").get().then((value) => {
 
@@ -314,7 +316,42 @@ class _HomeScreenState extends State<HomeScreen> {
                         }),
                   ],
                 ),
-              ) : _myRatesWidget(),
+              ) :Expanded(
+                child: Column(
+                  children: [
+                    FutureBuilder(
+                        future: DBModel().getAllRating(FirebaseAuth.instance.currentUser!.uid),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return  Text(
+                                "Something went wrong ${snapshot.error.toString()}");
+                          }
+
+
+
+                          if (snapshot.connectionState == ConnectionState.done) {
+                            requesRatetList = snapshot.data as List;
+                            print("requestList $requesRatetList");
+
+                            return Expanded(
+                              child: ListView.builder(
+                                  itemCount:
+                                  requesRatetList.length,
+                                  itemBuilder:
+                                      (context, index) {
+
+                                    return _myRatesWidget( thubnail: '${requesRatetList[index]['thubnail']}', name: '${requesRatetList[index]['school_name']}', uid: '${requesRatetList[index]['uid']}',   size: size , userid: '${requesRatetList[index]['userID']}', rate: '${requesRatetList[index]['rate']}');
+                                  }),
+                            );
+                          }
+
+                          return const Center(
+                            child: Text("loading......"),
+                          );
+                        }),
+                  ],
+                ),
+              ) ,
             ],
           ),
         ),
@@ -420,8 +457,87 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-  _myRatesWidget()
+  _myRatesWidget(
+   {
+     required size,
+     required String thubnail ,
+     required String name ,
+     required String uid ,
+     required String userid ,
+     required String rate ,
+
+
+   }
+      )
   {
-    return Text('Hello');
+    return InkWell(
+
+      child: Container(
+        width: size.width,
+        height: 100,
+        padding:const EdgeInsets.only(top: 10,bottom: 10,left: 10,right: 0,),
+        margin: const EdgeInsets.symmetric(vertical: 5,),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: const [
+              BoxShadow(
+                  color: Colors.grey, blurRadius: 5, offset: Offset(3, 3)),
+            ]),
+        child: Row(
+          children: [
+            Container(
+              width: size.width * 0.3,
+              decoration: BoxDecoration(
+                image: DecorationImage(image: NetworkImage("$thubnail"),fit: BoxFit.cover),
+                color: Colors.cyan,
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            const SizedBox(
+              width: 15,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children:   [
+                Text(
+                  '${name}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+
+                Container(child:   RatingBar.builder(
+                  ignoreGestures: true,
+                  itemSize: 20,
+                  initialRating: double.parse(rate),
+
+                  direction: Axis.horizontal,
+                  allowHalfRating: true,
+                  itemCount: 5,
+                  itemPadding: EdgeInsets.symmetric(horizontal: 0),
+                  itemBuilder: (context, _) => Icon(
+                    Icons.star,
+                    color: Colors.amber,
+
+                  ),
+                  onRatingUpdate: (rating) {
+
+                  },
+                ),)
+
+              ],
+            ),
+
+
+          ],
+        ),
+      ),
+    );
   }
 }
