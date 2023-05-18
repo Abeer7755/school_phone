@@ -1,8 +1,10 @@
 import 'dart:async';
 
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:school_phone/screens/auth/login/login_screen.dart';
+import 'package:school_phone/screens/home/home_screen.dart';
 
 
 class SplashScreen extends StatefulWidget {
@@ -21,26 +23,19 @@ class _SplashScreenState extends State<SplashScreen> {
         const Duration(
           seconds: 4,
         ),
-            () => {
-            Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-            builder: (ctx) => const LoginScreen(),
-            ),
-            )
-         /* FirebaseAuth.instance.authStateChanges().listen((User? user) {
-            if (user == null) {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (ctx) => const IntroScreen(),
-                ),
-              );
-            } else {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (ctx) => const HomeScreen(),),
-              );
-            }
-          }),*/
-        });
+            () => FirebaseAuth.instance.authStateChanges().listen((User? user) {
+                if (user == null) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (ctx) => const LoginScreen(),
+                    ),
+                  );
+                } else {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (ctx) =>  HomeScreen(),),
+                  );
+                }
+              }),);
   }
 
   @override
