@@ -1,33 +1,42 @@
 {
   "project_info": {
-    "project_number": "749768036497",
-    "project_id": "school-app-d708b",
-    "storage_bucket": "school-app-d708b.appspot.com"
+    "project_number": "762735196411",
+    "firebase_url": "https://test-8615a-default-rtdb.firebaseio.com",
+    "project_id": "test-8615a",
+    "storage_bucket": "test-8615a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:749768036497:android:d63c90d647a844428e6f30",
+        "mobilesdk_app_id": "1:762735196411:android:8b8d810266004b8564d85e",
         "android_client_info": {
           "package_name": "com.example.school_phone"
         }
       },
       "oauth_client": [
         {
-          "client_id": "749768036497-1o9ovccrobsr4ef725784dvcdcm75k0l.apps.googleusercontent.com",
+          "client_id": "762735196411-vt5qgqsk7t7not8nhpkuvi33gkb9h64f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.school_phone",
+            "certificate_hash": "333e6e7641587ed023d5dd176c00de9872aae88c"
+          }
+        },
+        {
+          "client_id": "762735196411-965pklun35euuhup6thhkc15p0ktqvog.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCb4ZKAcePc-4Lj77j6vOhIN5OKI0WTKnI"
+          "current_key": "AIzaSyAG1__nSztGoTpyKYird7j_fH_PN71fqLI"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "749768036497-1o9ovccrobsr4ef725784dvcdcm75k0l.apps.googleusercontent.com",
+              "client_id": "762735196411-965pklun35euuhup6thhkc15p0ktqvog.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

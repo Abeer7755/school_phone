@@ -1,9 +1,11 @@
 import 'package:buildcondition/buildcondition.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:school_phone/screens/auth/login/login_screen.dart';
 import 'package:school_phone/screens/home/home_screen.dart';
-
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -23,15 +25,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void visible() {
     setState(() {
       isVisible = !isVisible;
-      icon = isVisible ?  Icons.visibility_off: Icons.visibility;
+      icon = isVisible ? Icons.visibility_off : Icons.visibility;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Register Screen',style: TextStyle(color: Colors.black,),),
+        title: const Text(
+          'Register Screen',
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
         centerTitle: true,
         elevation: 0.0,
         backgroundColor: Colors.transparent,
@@ -41,37 +49,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Container(
             width: double.infinity,
             height: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10,),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 10,
+            ),
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Form(
-                key:_formKey,
+                key: _formKey,
                 child: Column(
-                  children:  [
-
-                    const SizedBox(height: 50,),
+                  children: [
+                    const SizedBox(
+                      height: 50,
+                    ),
                     const Text(
                       "Register Account",
-                      style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.w700,),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const Text(
                       "Complete your details",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.grey
-                      ),
+                      style: TextStyle(color: Colors.grey),
                     ),
-
-                    const SizedBox(height: 30,),
+                    const SizedBox(
+                      height: 30,
+                    ),
                     TextFormField(
                       textInputAction: TextInputAction.next,
                       controller: _nameController,
-                      validator: ValidationBuilder().email().build(),
+                      validator: ValidationBuilder().build(),
                       keyboardType: TextInputType.text,
-                      decoration:  InputDecoration(
+                      decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.orange,width: 1,),
+                          borderSide: const BorderSide(
+                            color: Colors.orange,
+                            width: 1,
+                          ),
                           borderRadius: BorderRadius.circular(60),
                         ),
                         hintText: 'enter your name',
@@ -86,9 +104,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       controller: _emailController,
                       validator: ValidationBuilder().email().build(),
                       keyboardType: TextInputType.text,
-                      decoration:  InputDecoration(
+                      decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.orange,width: 1,),
+                          borderSide: const BorderSide(
+                            color: Colors.orange,
+                            width: 1,
+                          ),
                           borderRadius: BorderRadius.circular(60),
                         ),
                         hintText: 'enter your email',
@@ -99,7 +120,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 15),
                     TextFormField(
-
                       controller: _passwordController,
                       validator: (value) {
                         if (value!.isEmpty) {
@@ -111,7 +131,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       keyboardType: TextInputType.visiblePassword,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.teal,width: 1,),
+                          borderSide: const BorderSide(
+                            color: Colors.teal,
+                            width: 1,
+                          ),
                           borderRadius: BorderRadius.circular(60),
                         ),
                         suffixIcon: IconButton(
@@ -128,7 +151,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 50),
                     BuildCondition(
                       condition: true,
-
                       builder: (context) => MaterialButton(
                         color: Colors.blue,
                         shape: RoundedRectangleBorder(
@@ -136,22 +158,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         minWidth: 500,
                         height: 50,
-                        onPressed: ()
-                        {
-                          if(_formKey.currentState!.validate())
-                          {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (ctx) => const HomeScreen(),
-                              ),
-                            );
-                          }else
-                          {}
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            FirebaseAuth.instance
+                                .createUserWithEmailAndPassword(
+                                    email: _emailController.text,
+                                    password: _passwordController.text)
+                                .then((value) => {
+                                      FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(FirebaseAuth
+                                              .instance.currentUser!.uid)
+                                          .set({
+                                        "uid":
+                                            "${FirebaseAuth.instance.currentUser!.uid}",
+                                        "name": "${_nameController.text}",
+                                        "email": "${_emailController.text}",
+                                        "pass": "${_passwordController.text}"
+                                      }).then((value) => {
+                                                Navigator.of(context)
+                                                    .pushReplacement(
+                                                  MaterialPageRoute(
+                                                    builder: (ctx) =>
+                                                        const HomeScreen(),
+                                                  ),
+                                                )
+                                              }),
+                                    });
+                          } else {}
                         },
                         child: Text(
                           'sign up'.toUpperCase(),
-                          style:
-                          const TextStyle(color: Colors.white, fontSize: 16),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 16),
                         ),
                       ),
                       fallback: (context) => const Center(
@@ -187,7 +226,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ],
                     ),
                     const SizedBox(height: 20),
-
                   ],
                 ),
               ),

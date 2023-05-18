@@ -1,9 +1,9 @@
 import 'package:buildcondition/buildcondition.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:school_phone/screens/auth/register/register_screen.dart';
 import 'package:school_phone/screens/home/home_screen.dart';
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -22,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void visible() {
     setState(() {
       isVisible = !isVisible;
-      icon = isVisible ?  Icons.visibility_off: Icons.visibility;
+      icon = isVisible ? Icons.visibility_off : Icons.visibility;
     });
   }
 
@@ -31,7 +31,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Login Screen',style: TextStyle(color: Colors.black,),),
+        title: const Text(
+          'Login Screen',
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
         centerTitle: true,
         elevation: 0.0,
         backgroundColor: Colors.transparent,
@@ -41,37 +46,50 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Container(
             width: double.infinity,
             height: double.infinity,
-
-            padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10,),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 10,
+            ),
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: [
-                    const SizedBox(height: 50,),
+                    const SizedBox(
+                      height: 50,
+                    ),
                     const Text(
                       "Welcome Back",
-                      style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.w700,),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 15,),
+                    const SizedBox(
+                      height: 15,
+                    ),
                     const Text(
                       "Sign in with your email and password",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.grey
-                      ),
+                      style: TextStyle(color: Colors.grey),
                     ),
-                    const SizedBox(height: 30,),
+                    const SizedBox(
+                      height: 30,
+                    ),
                     TextFormField(
                       textInputAction: TextInputAction.next,
                       controller: _emailController,
                       validator: ValidationBuilder().email().build(),
                       keyboardType: TextInputType.text,
-                      decoration:  InputDecoration(
+                      decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.orange,width: 1,),
+                          borderSide: const BorderSide(
+                            color: Colors.orange,
+                            width: 1,
+                          ),
                           borderRadius: BorderRadius.circular(60),
                         ),
                         hintText: 'enter your email',
@@ -82,7 +100,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
-
                       controller: _passwordController,
                       validator: (value) {
                         if (value!.isEmpty) {
@@ -94,7 +111,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       keyboardType: TextInputType.visiblePassword,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.orange,width: 1,),
+                          borderSide: const BorderSide(
+                            color: Colors.orange,
+                            width: 1,
+                          ),
                           borderRadius: BorderRadius.circular(60),
                         ),
                         suffixIcon: IconButton(
@@ -109,7 +129,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       obscureText: isVisible,
                     ),
                     const SizedBox(height: 50),
-                   
                     BuildCondition(
                       condition: true,
                       builder: (context) => MaterialButton(
@@ -119,24 +138,25 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         minWidth: 500,
                         height: 50,
-                        onPressed: ()
-                        {
-                          if(_formKey.currentState!.validate())
-                            {
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (ctx) => const HomeScreen(),
-                                ),
-                              );
-                            }else
-                            {}
-
-
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            FirebaseAuth.instance
+                                .signInWithEmailAndPassword(
+                                    email: _emailController.text,
+                                    password: _passwordController.text)
+                                .then((value) => {
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                          builder: (ctx) => const HomeScreen(),
+                                        ),
+                                      )
+                                    });
+                          } else {}
                         },
                         child: Text(
                           'sign in'.toUpperCase(),
-                          style:
-                          const TextStyle(color: Colors.white, fontSize: 16),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 16),
                         ),
                       ),
                       fallback: (context) => const Center(
@@ -172,7 +192,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                     const SizedBox(height: 20),
-
                   ],
                 ),
               ),
