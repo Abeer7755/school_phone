@@ -303,7 +303,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   itemBuilder:
                                       (context, index) {
 
-                                    return _schoolWidget( thubnail: '${requestList[index]['thubnail']}', name: '${requestList[index]['name']}', uid: '${requestList[index]['uid']}', url: '${requestList[index]['url']}', time: requestList[index]['time'] , size: size);
+                                    return _schoolWidget( thubnail: '${requestList[index]['thubnail']}', name: '${requestList[index]['name']}', uid: '${requestList[index]['uid']}', url: '${requestList[index]['url']}', time: requestList[index]['time'] , size: size , userid: _userid.toString());
                                   }),
                             );
                           }
@@ -330,6 +330,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required String thubnail ,
     required String name ,
     required String uid ,
+    required String userid ,
     required String url ,
     required Timestamp time ,
 
@@ -339,7 +340,14 @@ class _HomeScreenState extends State<HomeScreen> {
   {
     DateTime d = time.toDate();
     return InkWell(
-
+      onTap:()
+      {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (ctx) =>  RateScreen(uid:uid ,userid:userid ,name:name ,thubnail:thubnail,time:d.toString() ),
+          ),
+        );
+      },
       child: Container(
         width: size.width,
         height: 100,
@@ -392,29 +400,19 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const Spacer(),
-            InkWell(
-              onTap:()
-              {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (ctx) =>  RateScreen(uid:uid ,name:name ,thubnail:thubnail,time:d.toString() ),
-                  ),
-                );
-              },
-              child: Container(
-                width: 30,
-                height: 55,
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    bottomLeft:  Radius.circular(15),
-                  ),
-                  color: Colors.orange,
-
+            Container(
+              width: 30,
+              height: 55,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  bottomLeft:  Radius.circular(15),
                 ),
-                child: const Icon(Icons.star,color: Colors.white,size: 15,),
+                color: Colors.orange,
+
               ),
+              child: const Icon(Icons.star,color: Colors.white,size: 15,),
             )
 
           ],
