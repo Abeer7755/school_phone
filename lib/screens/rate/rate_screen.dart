@@ -3,22 +3,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:school_phone/screens/home/home_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RateScreen extends StatefulWidget {
-  final String uid, name, thubnail, time, userid;
+  final String uid, name, thubnail, time, userid,url;
   RateScreen(
       {Key? key,
       required this.uid,
       required this.name,
       required this.thubnail,
-      required this.time, required  this.userid})
+      required this.time, required  this.userid, required this. url})
       : super(key: key);
 
   @override
   State<RateScreen> createState() => _RateScreenState();
 }
-
+Future<void> _launchUrl(Uri _url) async {
+  if (!await launchUrl(_url)) {
+    throw Exception('Could not launch $_url');
+  }
+}
 class _RateScreenState extends State<RateScreen> {
+
   double rate = 0.0;
   late final _controller = TextEditingController();
   @override
@@ -109,24 +115,54 @@ class _RateScreenState extends State<RateScreen> {
                 const SizedBox(
                   height: 50,
                 ),
-                RatingBar.builder(
-                  initialRating: 3,
-                  minRating: 1,
-                  direction: Axis.horizontal,
-                  allowHalfRating: true,
-                  itemCount: 5,
-                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                  itemBuilder: (context, _) => Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
-                  onRatingUpdate: (rating) {
-                    setState(() {
-                      rate = rating;
-                    });
-                    print("rate =$rate");
-                  },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RatingBar.builder(
+                      initialRating: 3,
+                      minRating: 1,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      itemCount: 5,
+                      itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                      itemBuilder: (context, _) => Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      ),
+                      onRatingUpdate: (rating) {
+                        setState(() {
+                          rate = rating;
+                        });
+                        print("rate =$rate");
+                      },
+                    ),
+
+
+                    InkWell(
+                      onTap: () {
+                        _launchUrl( Uri.parse("${widget.url}"));
+
+                        print(widget.url);
+                      },
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.blueAccent,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.gps_fixed_sharp,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                      ),
+                    ),
+
+                  ],
                 ),
+
                 const SizedBox(
                   height: 20,
                 ),

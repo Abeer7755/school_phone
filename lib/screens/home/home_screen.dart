@@ -381,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
       {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (ctx) =>  RateScreen(uid:uid ,userid:userid ,name:name ,thubnail:thubnail,time:d.toString() ),
+            builder: (ctx) =>  RateScreen(uid:uid ,userid:userid ,name:name ,thubnail:thubnail,time:d.toString() ,url:url),
           ),
         );
       },
